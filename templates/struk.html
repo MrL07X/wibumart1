@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Struk Pembelian{% endblock %}
+
+{% block extra_head %}
+<style>
+  .rc-wrap{
+    position:relative;z-index:1;min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:100px 24px 60px;
+  }
+  .rc-inner{width:100%;max-width:640px;}
+
+  /* Success Banner */
+  .success-banner{
+    text-align:center;margin-bottom:32px;
+    animation:bounceIn .7s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes bounceIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  .success-icon{font-size:4.5rem;margin-bottom:12px;}
+  .success-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:3px;color:var(--ok);}
+  .success-sub{color:var(--muted);font-size:.94rem;margin-top:6px;}
+
+  /* Receipt Card */
+  .receipt{
+    background:var(--bg-card);border:1px solid rgba(255,146,0,.22);
+    border-radius:24px;overflow:hidden;
+    animation:fdU .6s .2s ease both;
+  }
+  @keyframes fdU{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+  .rc-hd{
+    background:linear-gradient(135deg,var(--bg-700),var(--bg-card));
+    padding:28px;text-align:center;
+    border-bottom:2px dashed rgba(255,255,255,.07);
+  }
+  .rc-logo{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:4px;color:var(--accent);}
+  .rc-tagline{color:var(--muted);font-size:.78rem;margin:4px 0;}
+  .rc-inv{color:var(--muted);font-size:.8rem;margin-top:4px;}
+  .rc-ok-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(46,213,115,.1);border:1px solid rgba(46,213,115,.3);
+    color:var(--ok);font-weight:700;font-size:.8rem;
+    padding:6px 16px;border-radius:50px;margin-top:12px;
+  }
+
+  .rc-body{padding:0 28px;}
+  .rc-sec{padding:18px 0;border-bottom:1px dashed rgba(255,255,255,.07);}
+  .rc-sec:last-child{border:none;}
+  .rc-lbl{color:var(--muted);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;}
+  .rc-val{font-weight:700;font-size:.9rem;line-height:1.5;}
+  .rc-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.86rem;
+  }
+  .rc-item:last-child{border:none;}
+  .rc-item-l{display:flex;align-items:center;gap:8px;}
+  .rc-item-price{font-weight:700;color:var(--accent-l);}
+
+  .rc-total{
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(255,146,0,.08);border:1px solid rgba(255,146,0,.18);
+    border-radius:14px;padding:16px 18px;margin:0 28px 0;
+  }
+  .rc-total-lbl{font-weight:800;font-size:1rem;}
+  .rc-total-val{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;color:var(--accent);}
+
+  .rc-note{margin:16px 28px;border-radius:12px;padding:14px;font-size:.84rem;line-height:1.7;}
+  .rc-note.cod{background:rgba(46,213,115,.08);border:1px solid rgba(46,213,115,.2);color:var(--ok);}
+  .rc-note.tf{background:rgba(255,146,0,.07);border:1px solid rgba(255,146,0,.18);}
+  .bank-no{display:block;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:4px;color:var(--txt);margin:4px 0;}
+
+  /* Python output info */
+  .py-out{
+    margin:16px 28px 0;background:rgba(255,212,0,.06);
+    border:1px solid rgba(255,212,0,.15);border-radius:12px;padding:14px;
+  }
+  .py-out-title{color:var(--gold);font-weight:800;font-size:.8rem;margin-bottom:8px;}
+  .py-out code{color:var(--muted);font-size:.76rem;line-height:2;}
+
+  .rc-actions{padding:24px 28px;display:flex;gap:12px;border-top:1px solid var(--border);}
+  .rc-actions a{flex:1;text-align:center;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rc-wrap">
+  <div class="rc-inner">
+
+    <!-- Success Banner -->
+    <div class="success-banner">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">PEMBELIAN BERHASIL!</div>
+      <div class="success-sub">Terima kasih! Pesananmu sedang diproses oleh tim WibuMart 📦</div>
+    </div>
+
+    <!-- RECEIPT -->
+    <div class="receipt">
+
+      <!-- Header -->
+      <div class="rc-hd">
+        <div class="rc-logo">🎌 WIBUMART</div>
+        <div class="rc-tagline">Merchandise Anime #1 Indonesia · Powered by Python 🐍</div>
+        <div class="rc-inv">{{ tx.waktu }}</div>
+        <div class="rc-inv">No. Invoice: <strong style="color:var(--txt)">#{{ tx.invoice }}</strong></div>
+        <span class="rc-ok-badge">✓ Pembayaran Dikonfirmasi</span>
+      </div>
+
+      <!-- Body -->
+      <div class="rc-body">
+
+        <!-- Nama Pembeli -->
+        <div class="rc-sec">
+          <div class="rc-lbl">Nama Pembeli</div>
+          <div class="rc-val">👤 {{ tx.nama }}</div>
+        </div>
+
+        <!-- Alamat -->
+        <div class="rc-sec">
+          <div class="rc-lbl">Alamat Pengiriman</div>
+          <div class="rc-val">📍 {{ tx.alamat }}</div>
+        </div>
+
+        <!-- Daftar Barang -->
+        <div class="rc-sec">
+          <div class="rc-lbl">Daftar Barang</div>
+          <div style="margin-top:8px">
+            {% for item in tx.items %}
+            <div class="rc-item">
+              <div class="rc-item-l">
+                <span>{{ item.emoji }}</span>
+                <span>{{ item.nama }} <span style="color:var(--muted)">×{{ item.jumlah }}</span></span>
+              </div>
+              <span class="rc-item-price">Rp {{ '{:,.0f}'.format(item.harga * item.jumlah).replace(',','.') }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Metode Bayar -->
+        <div class="rc-sec">
+          <div class="rc-lbl">Metode Pembayaran</div>
+          <div class="rc-val">
+            {% if tx.metode == 'COD' %}
+            🚚 COD — Bayar Saat Barang Diterima
+            {% else %}
+            🏦 Transfer Bank BCA — 123-456-789
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Total -->
+      <div class="rc-total" style="margin-top:0;padding-top:18px;">
+        <span class="rc-total-lbl">💰 TOTAL PEMBAYARAN</span>
+        <span class="rc-total-val">{{ tx.total_fmt }}</span>
+      </div>
+
+      <!-- Payment note -->
+      {% if tx.metode == 'COD' %}
+      <div class="rc-note cod">
+        ✅ Siapkan uang tunai <strong>{{ tx.total_fmt }}</strong> yang pas saat kurir tiba di alamatmu.
+      </div>
+      {% else %}
+      <div class="rc-note tf">
+        <strong style="color:var(--accent)">Info Transfer Bank:</strong><br>
+        <span style="color:var(--muted)">Bank BCA · a/n WibuMart Official</span>
+        <span class="bank-no">123-456-789</span>
+        <span style="color:var(--muted);font-size:.82rem">Nominal Transfer: <strong style="color:var(--accent)">{{ tx.total_fmt }}</strong></span>
+      </div>
+      {% endif %}
+
+      <!-- Python Output Info -->
+      <div class="py-out">
+        <div class="py-out-title">🐍 Python Output (Fungsi TampilkanHasil):</div>
+        <code>
+          nama_pembeli  = "{{ tx.nama }}"<br>
+          alamat        = "{{ tx.alamat[:40] }}..."<br>
+          metode_bayar  = "{{ tx.metode }}"<br>
+          total_harga   = {{ tx.total }}<br>
+          nomor_invoice = "{{ tx.invoice }}"
+        </code>
+      </div>
+
+      <!-- Actions -->
+      <div class="rc-actions">
+        <a href="/" class="btn-p" style="text-align:center;flex:1">🎌 Belanja Lagi</a>
+        <button onclick="window.print()" class="btn-s" style="flex:1;font-size:.9rem">🖨️ Cetak Struk</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

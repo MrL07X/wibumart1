@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}WibuMart{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ── HERO ─────────────────────────────────────────────────────────── */
+  .hero{
+    position:relative;z-index:1;min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:100px 24px 60px;overflow:hidden;
+  }
+  .hg{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;}
+  .hg1{width:560px;height:560px;background:rgba(27,63,181,.28);top:-120px;left:-80px;animation:g1f 7s ease-in-out infinite;}
+  .hg2{width:430px;height:430px;background:rgba(255,146,0,.2);bottom:-80px;right:-60px;animation:g2f 6s ease-in-out infinite;}
+  @keyframes g1f{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+  @keyframes g2f{0%,100%{transform:translate(0,0)}50%{transform:translate(-25px,-35px)}}
+  .h-inner{position:relative;z-index:2;max-width:840px;}
+  .h-eyebrow{
+    display:inline-block;background:rgba(255,146,0,.12);border:1px solid rgba(255,146,0,.32);
+    color:#FFB340;padding:7px 22px;border-radius:50px;
+    font-size:.8rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+    margin-bottom:22px;animation:fdU .7s ease both;
+  }
+  .h-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(4.5rem,13vw,9.5rem);line-height:.87;letter-spacing:5px;
+    margin-bottom:10px;animation:fdU .7s .1s ease both;
+  }
+  .h-title em{color:var(--accent);font-style:normal;}
+  .h-sub{
+    font-family:'Bebas Neue',sans-serif;font-size:clamp(1.1rem,3vw,1.9rem);
+    color:var(--muted);letter-spacing:3px;margin-bottom:20px;
+    animation:fdU .7s .2s ease both;
+  }
+  .h-desc{color:var(--muted);font-size:1rem;line-height:1.85;margin-bottom:40px;animation:fdU .7s .3s ease both;}
+  .cta-wrap{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fdU .7s .4s ease both;}
+  .h-stats{
+    display:flex;justify-content:center;gap:50px;
+    margin-top:64px;padding-top:38px;border-top:1px solid var(--border);
+    animation:fdU .7s .5s ease both;flex-wrap:wrap;
+  }
+  .snum{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:var(--accent);display:block;line-height:1;}
+  .slbl{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;}
+  @keyframes fdU{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+  /* MARQUEE */
+  .mq-strip{
+    position:relative;z-index:1;background:var(--accent);
+    overflow:hidden;padding:13px 0;
+    border-top:1px solid rgba(255,255,255,.15);border-bottom:1px solid rgba(255,255,255,.15);
+  }
+  .mq-track{display:flex;gap:50px;white-space:nowrap;animation:mqmv 25s linear infinite;width:max-content;}
+  .mq-track span{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:#fff;opacity:.9;}
+  @keyframes mqmv{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* PRODUCTS SECTION */
+  .sec{position:relative;z-index:1;padding:90px 48px;max-width:1400px;margin:0 auto;}
+  .sec-hd{text-align:center;margin-bottom:50px;}
+
+  /* PYTHON BADGE */
+  .py-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    background:rgba(255,212,0,.1);border:1px solid rgba(255,212,0,.25);
+    color:var(--gold);font-size:.76rem;font-weight:700;
+    padding:5px 14px;border-radius:50px;margin-bottom:14px;letter-spacing:1px;
+  }
+
+  /* CAT TABS */
+  .cat-bar{display:flex;justify-content:center;gap:12px;margin-bottom:44px;flex-wrap:wrap;}
+  .cat-btn{
+    padding:10px 26px;border-radius:50px;border:2px solid var(--border);
+    background:transparent;color:var(--muted);
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:.86rem;
+    cursor:pointer;transition:all .22s;text-decoration:none;display:inline-block;
+  }
+  .cat-btn:hover{border-color:rgba(255,146,0,.4);color:var(--accent);}
+  .cat-btn.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+  /* PRODUCT GRID */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:24px;}
+  .pcard{
+    background:var(--bg-card);border-radius:22px;border:1px solid var(--border);
+    overflow:hidden;transition:all .32s;position:relative;
+  }
+  .pcard:hover{transform:translateY(-10px);border-color:rgba(255,146,0,.35);box-shadow:0 24px 60px rgba(0,0,0,.45),var(--glow-o);}
+  .pimg{
+    height:194px;display:flex;align-items:center;justify-content:center;
+    font-size:5rem;position:relative;overflow:hidden;transition:transform .4s;
+  }
+  .pcard:hover .pimg{transform:scale(1.06);}
+  .pimg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,var(--bg-card));}
+  .pbdg{
+    position:absolute;top:13px;right:13px;z-index:2;
+    background:var(--accent);color:#fff;font-size:.66rem;font-weight:900;
+    padding:4px 11px;border-radius:50px;text-transform:uppercase;letter-spacing:1.5px;
+  }
+  .pbdg.new{background:var(--ok);}
+  .pbdg.hot{background:var(--danger);}
+  .pbdg.popular{background:linear-gradient(135deg,#FF9200,#FFD700);color:#000;}
+  .pinfo{padding:20px;}
+  .pcat{color:var(--accent);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:5px;}
+  .pnm{font-weight:800;font-size:1rem;margin-bottom:5px;line-height:1.3;}
+  .pdesc{color:var(--muted);font-size:.78rem;line-height:1.55;margin-bottom:14px;}
+  .pfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .ppr{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--accent-l);letter-spacing:1px;}
+  .ppr small{font-family:'Nunito',sans-serif;font-size:.76rem;color:var(--muted);}
+  .prating{font-size:.78rem;color:var(--gold);font-weight:700;}
+  .addbtn{
+    background:var(--accent);border:none;border-radius:11px;
+    padding:9px 15px;color:#fff;font-family:'Nunito',sans-serif;
+    font-weight:900;font-size:.82rem;cursor:pointer;transition:all .22s;
+    white-space:nowrap;display:flex;align-items:center;gap:5px;
+  }
+  .addbtn:hover{background:var(--accent-l);transform:scale(1.06);}
+  .addbtn:active{transform:scale(.95);}
+
+  /* HOW IT WORKS */
+  .how-sec{
+    position:relative;z-index:1;
+    background:linear-gradient(to bottom,transparent,rgba(255,146,0,.03),transparent);
+    padding:90px 48px;
+  }
+  .how-inner{max-width:1100px;margin:0 auto;}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:24px;margin-top:50px;}
+  .how-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:32px 22px;text-align:center;transition:all .3s;}
+  .how-card:hover{border-color:rgba(255,146,0,.3);transform:translateY(-6px);}
+  .how-num{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:rgba(255,146,0,.15);line-height:1;margin-bottom:6px;}
+  .how-icon{font-size:2.6rem;margin-bottom:14px;}
+  .how-title{font-weight:800;font-size:.98rem;margin-bottom:8px;}
+  .how-desc{color:var(--muted);font-size:.82rem;line-height:1.65;}
+
+  /* TEAM */
+  .team-sec{position:relative;z-index:1;padding:90px 48px;max-width:1000px;margin:0 auto;text-align:center;}
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:22px;margin-top:50px;}
+  .team-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;padding:30px 18px;transition:all .3s;}
+  .team-card:hover{border-color:rgba(255,146,0,.35);transform:translateY(-6px);box-shadow:var(--glow-b);}
+  .team-em{font-size:2.8rem;margin-bottom:14px;}
+  .team-nm{font-weight:800;font-size:.92rem;line-height:1.3;margin-bottom:5px;}
+  .team-role{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);letter-spacing:2px;margin-bottom:5px;}
+  .team-nim{color:var(--muted);font-size:.76rem;font-weight:600;}
+
+  @media(max-width:768px){
+    .sec{padding:60px 20px;}
+    .how-sec{padding:60px 20px;}
+    .team-sec{padding:60px 20px;}
+    .h-stats{gap:24px;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hg hg1"></div>
+  <div class="hg hg2"></div>
+  <div class="h-inner">
+    <div class="h-eyebrow">🇯🇵 Merchandise Anime Terlengkap Indonesia</div>
+    <h1 class="h-title">WIBU<em>MART</em></h1>
+    <p class="h-sub">Sistem Penjualan Merchandise Anime Berbasis Web</p>
+    <p class="h-desc">
+      Platform e-commerce khusus merchandise anime terpercaya.<br>
+      Dibangun dengan <strong style="color:var(--gold)">Python 🐍 + Flask</strong> untuk para wibu sejati! 🔥
+    </p>
+    <div class="cta-wrap">
+      <a class="btn-p" href="#products">🛍️ Belanja Sekarang</a>
+      <a class="btn-s" href="#how">📖 Cara Beli</a>
+    </div>
+    <div class="h-stats">
+      <div><span class="snum">200+</span><span class="slbl">Produk</span></div>
+      <div><span class="snum">1.2K+</span><span class="slbl">Pelanggan</span></div>
+      <div><span class="snum">50+</span><span class="slbl">Anime Series</span></div>
+      <div><span class="snum">4.9★</span><span class="slbl">Rating</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-strip">
+  <div class="mq-track">
+    {% for _ in range(2) %}
+    <span>🎌 FIGURE ANIME</span><span>⭐ POSTER PREMIUM</span>
+    <span>🌸 AKSESORIS KAWAII</span><span>✨ HARGA TERJANGKAU</span>
+    <span>🚀 PENGIRIMAN CEPAT</span><span>💎 KUALITAS TERJAMIN</span>
+    <span>🔥 LIMITED EDITION</span><span>🎁 GIFT READY</span>
+    <span>🐍 POWERED BY PYTHON</span><span>⚡ FLASK + JINJA2</span>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="sec" id="products">
+  <div class="sec-hd">
+    <div class="py-badge">🐍 Data Produk disimpan dalam <code>list[dict]</code> Python</div>
+    <span class="ey">✨ Koleksi Pilihan</span>
+    <h2 class="stitle">PRODUK <em>ANIME</em></h2>
+  </div>
+
+  <!-- Category Filter -->
+  <div class="cat-bar">
+    {% for cat in [('all','🌟 Semua'),('figure','🗿 Figure'),('poster','🖼️ Poster'),('aksesoris','🎒 Aksesoris')] %}
+    <a href="/?cat={{ cat[0] }}" class="cat-btn{% if kategori_aktif == cat[0] %} on{% endif %}">{{ cat[1] }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- Product Grid — Jinja2 for loop -->
+  <div class="pgrid">
+    {% for p in produk %}
+    <div class="pcard">
+      <div class="pimg" style="background:linear-gradient(135deg,{{ p.warna }}33,{{ p.warna }}11);">
+        <span style="position:relative;z-index:1;font-size:5rem">{{ p.emoji }}</span>
+        {% if p.badge %}
+        <span class="pbdg {{ p.badge_tipe }}">{{ p.badge }}</span>
+        {% endif %}
+      </div>
+      <div class="pinfo">
+        <div class="pcat">{{ p.kategori | upper }}</div>
+        <div class="pnm">{{ p.nama }}</div>
+        <div class="pdesc">{{ p.deskripsi }}</div>
+        <div style="margin-bottom:12px">
+          <span class="prating">★ {{ p.rating }}</span>
+          <span style="color:var(--muted);font-size:.75rem;margin-left:8px">· Stok: {{ p.stok }}</span>
+        </div>
+        <div class="pfoot">
+          <div>
+            <div class="ppr"><small>Rp</small>{{ p.harga | rupiah | replace('Rp ','') }}</div>
+          </div>
+          <button class="addbtn" onclick="tambahKeranjang({{ p.id }}, this)">🛒 + Keranjang</button>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">
+      <div style="font-size:3rem;margin-bottom:12px">😢</div>
+      <p style="font-weight:700">Produk tidak ditemukan untuk kategori ini.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-sec" id="how">
+  <div class="how-inner">
+    <div class="sec-hd">
+      <span class="ey">🛒 Cara Berbelanja</span>
+      <h2 class="stitle">MUDAH & <em>CEPAT</em></h2>
+    </div>
+    <div class="how-grid">
+      {% set steps = [
+        ('01','🔍','Pilih Produk','Browse koleksi merchandise anime terlengkap dan klik tombol + Keranjang.'),
+        ('02','🛒','Cek Keranjang','Buka keranjang belanja, atur jumlah, dan klik Checkout Sekarang.'),
+        ('03','👤','Isi Data Diri','Masukkan nama lengkap dan alamat pengiriman dengan benar.'),
+        ('04','💳','Pilih Pembayaran','Pilih COD atau Transfer Bank, konfirmasi, dan selesai!')
+      ] %}
+      {% for num, icon, title, desc in steps %}
+      <div class="how-card">
+        <div class="how-num">{{ num }}</div>
+        <div class="how-icon">{{ icon }}</div>
+        <div class="how-title">{{ title }}</div>
+        <div class="how-desc">{{ desc }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- PYTHON INFO BANNER -->
+<section style="position:relative;z-index:1;padding:0 48px 40px;">
+  <div style="max-width:900px;margin:0 auto;background:linear-gradient(135deg,rgba(255,212,0,.08),rgba(27,63,181,.12));border:1px solid rgba(255,212,0,.2);border-radius:22px;padding:36px;display:flex;align-items:flex-start;gap:20px;">
+    <div style="font-size:3rem;flex-shrink:0">🐍</div>
+    <div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--gold);margin-bottom:10px">KOMPONEN PYTHON YANG DIGUNAKAN</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">
+        {% set konsep = [
+          ('📦','List & Dictionary','Data produk disimpan sebagai list of dict'),
+          ('🔢','Tipe Data','String, Integer, Float digunakan di seluruh sistem'),
+          ('➗','Operator Aritmatika','total = harga × jumlah untuk kalkulasi'),
+          ('🔀','Struktur Kontrol','if-else dan for-loop untuk alur program'),
+          ('🔧','Fungsi/Subprogram','def hitung_total(), def filter_produk(), dll.'),
+          ('🌐','Flask Routes','@app.route() untuk setiap halaman'),
+          ('📝','Session','Keranjang belanja disimpan di server session'),
+          ('🖼️','Jinja2 Template','Template engine Python untuk render HTML'),
+        ] %}
+        {% for icon, title, desc in konsep %}
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;">
+          <div style="font-size:1.3rem;margin-bottom:5px">{{ icon }}</div>
+          <div style="font-weight:800;font-size:.84rem;color:var(--gold);margin-bottom:3px">{{ title }}</div>
+          <div style="color:var(--muted);font-size:.74rem;line-height:1.5">{{ desc }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-sec" id="team">
+  <span class="ey">👥 Kelompok CIE201</span>
+  <h2 class="stitle">ANGGOTA <em>TIM</em></h2>
+  <div class="team-grid">
+    {% for m in tim %}
+    <div class="team-card">
+      <div class="team-em">{{ m.emoji }}</div>
+      <div class="team-nm">{{ m.nama }}</div>
+      <div class="team-role">{{ m.peran }}</div>
+      <div class="team-nim">{{ m.nim }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
