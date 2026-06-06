@@ -11,6 +11,8 @@
 ╚══════════════════════════════════════════════════════════════════════╝
 """
 
+import os
+
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from datetime import datetime
 import random
@@ -18,6 +20,14 @@ import string
 
 # ── Inisialisasi Aplikasi Flask ──────────────────────────────────────────────
 app = Flask(__name__)
+from flask_sqlalchemy import SQLAlchemy
+
+# Baris di bawah ini untuk menentukan nama file database kamu nanti
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wibumart.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Mengaktifkan database di dalam Flask
+db = SQLAlchemy(app)
 app.secret_key = "wibumart-cie201-secret-2025"
 
 
@@ -250,8 +260,18 @@ def filter_produk(kategori: str) -> list:
 app.jinja_env.filters["rupiah"] = format_rupiah
 
 
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━#  STRUKTUR TABEL PESANAN
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-#  ROUTES / ENDPOINT
+
+class Pesanan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Nomor_Invoice = db.Column(db.String(50), unique=True)
+    Nama_Pembeli = db.Column(db.String(100))
+    Total_Bayar = db.Column(db.Integer)
+    Status_Pembayaran = db.Column(db.String(20), default='Belum Bayar')
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━#  ROUTES / ENDPOINT
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.route("/")
@@ -447,9 +467,13 @@ def struk():
 #  ENTRY POINT
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+        
     print("=" * 60)
     print("  🎌  WIBUMART — Merchandise Anime System")
     print("  📚  Mata Kuliah: Bahasa Pemrograman (CIE201)")
     print("  🌐  Buka: http://127.0.0.1:5000")
     print("=" * 60)
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
